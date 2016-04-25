@@ -9,6 +9,7 @@ var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
 var through = require('through2');
+var shasum = require('shasum');
 var parseConfig = require('./lib/config');
 var validVariations = require('./lib/variations');
 var mendelify = require('./lib/mendelify-transform-stream');
@@ -155,6 +156,7 @@ MendelBrowserify.prototype.pushBundleManifest = function(dep) {
 
     var bundleIndex = bundleIndexes[id];
     if (typeof bundleIndex === 'undefined') {
+        data.sha = shasum(data.source);
         var newDep = {
             variations: [variation],
             data: [data],
@@ -172,10 +174,8 @@ MendelBrowserify.prototype.pushBundleManifest = function(dep) {
         var variationIndex = existingData.variations.indexOf(variation);
         if (variationIndex === -1) {
             existingData.variations.push(variation);
+            data.sha = shasum(data.source);
             existingData.data.push(data);
-        } else if (existingData.data[variationIndex].sha !== dep.sha) {
-            throw new Error('Files with same variation ('+
-                variation+') and id ('+id+') should have the same SHA');
         }
     }
 }

@@ -23,7 +23,9 @@ function MendelLoader(config) {
 
 MendelLoader.prototype.resolver = function(context) {
     var variations = this._getVariationMap(context);
-    return new MendelResolver(variations, this._mountdir);
+    var r = new MendelResolver(variations, this._mountdir);
+    r.tree = this._tree.findTreeForVariations(context.bundle, context.variations);
+    return r;
 }
 
 MendelLoader.prototype._getVariationMap = function(context) {
@@ -39,8 +41,9 @@ function MendelResolver(variations, mountdir) {
     this._resolveCache = {};
 }
 
-MendelResolver.prototype.require = function (name) {
-    var parent = module.parent;
+MendelResolver.prototype.require = function (name, parent) {
+    parent = parent || module.parent;
+    console.log(arguments);
     var that = this;
     var rname = that.resolve(name);
     var modPath = Module._resolveFilename(rname || name, parent);
@@ -70,7 +73,7 @@ MendelResolver.prototype.require = function (name) {
         var mendelMod = {
             exports: {},
             require: function(request) {
-                return MendelResolver.prototype.require.apply(that, [request, parent]);
+                return MendelResolver.prototype.require.apply(that, [request, mod]);
             }
         };
         mendelFn.apply(that, [mendelMod.require, mendelMod, mendelMod.exports]);

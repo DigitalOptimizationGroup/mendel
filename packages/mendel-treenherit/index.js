@@ -5,6 +5,7 @@
 
 var transformTools = require('browserify-transform-tools');
 var resolveInDirs = require('./lib/resolve-dirs');
+var path = require('path');
 
         /*  CLI USAGE:
             browserify src/A/main.js \
@@ -68,7 +69,8 @@ var requireTransform = transformTools.makeRequireTransform(
             if (!finalPath) {
                 return transformDone();
             }
-            return transformDone(null, "require('"+finalPath+"')");
+            var relative = path.relative(path.dirname(opts.file), finalPath);
+            return transformDone(null, "require('./"+relative+"')");
         });
     }
 );
