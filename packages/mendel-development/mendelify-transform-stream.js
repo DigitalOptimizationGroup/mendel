@@ -17,6 +17,10 @@ function mendelifyTransformStream(variations, expose) {
             }
         }
 
+        if (typeof row.expose === 'string') {
+            row.expose = pathOrVariationMatch(row.expose, variations);
+        }
+
         Object.keys(row.deps).forEach(function (key) {
             var value = row.deps[key];
             delete row.deps[key];
