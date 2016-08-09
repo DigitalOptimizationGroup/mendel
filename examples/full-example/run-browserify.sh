@@ -22,9 +22,8 @@ browserify                                                       \
 browserify      "isomorphic/base/main.js"                        \
     --external  "react"                                          \
     --external  "react-dom"                                      \
-    --external  "./isomorphic/base/components/lazy.js" \
-    --require   "./isomorphic/base/components/button.js" \
-    --require   "./isomorphic/variations/bucket_A/components/button.js" \
+    --external  "./isomorphic/base/components/lazy.js"           \
+    --require   "./isomorphic/base/components/button.js"         \
     --outfile   "build/client/base/main.js"                      \
     --transform "babelify"                                       \
                                                                  \
@@ -41,11 +40,10 @@ browserify      "isomorphic/base/main.js"                        \
 
 
 browserify   \
-    --require   "./isomorphic/base/components/lazy.js" \
+    --require   "./isomorphic/base/components/lazy.js"           \
     --external  "react"                                          \
     --external  "react-dom"                                      \
-    --external  "./isomorphic/base/components/button.js" \
-    --external  "./isomorphic/variations/bucket_A/components/button.js" \
+    --external  "./isomorphic/base/components/button.js"    \
     --outfile   "build/client/base/lazy.js"                      \
     --transform "babelify"                                       \
                                                                  \

@@ -12,6 +12,7 @@ var through = require('through2');
 var parseConfig = require('mendel-config');
 var validVariations = require('mendel-config/variations');
 var mendelify = require('mendel-development/mendelify-transform-stream');
+var variationMatches = require('mendel-development/variation-matches');
 var proxy = require('./proxy');
 var tmp = require('tmp');
 var onlyPublicMethods = proxy.onlyPublicMethods;
@@ -29,7 +30,7 @@ function MendelBrowserify(baseBundle, opts) {
     this.baseOptions = baseBundle._options;
 
     opts.basedir = defined(
-        opts.basedir, argv.basedir, this.baseOptions.basedir
+        opts.basedir, argv.basedir, this.baseOptions.basedir, process.cwd()
     );
     opts.outfile = defined(
         opts.outfile, argv.outfile, argv.o, this.baseOptions.outfile
@@ -53,6 +54,35 @@ function MendelBrowserify(baseBundle, opts) {
     };
     this.variations = validVariations(xtend(this.baseOptions, opts));
     this.variationsWithBase = [this.baseVariation].concat(this.variations);
+
+    var alldirs = this.variationsWithBase.reduce(function(alldirs, variation) {
+        variation.chain.forEach(function(path) {
+            if (-1 === alldirs.indexOf(path)) {
+                alldirs.push(path);
+            }
+        });
+        return alldirs;
+    }, []);
+
+    var realExternal = baseBundle.constructor.prototype.external;
+    baseBundle.constructor.prototype.external = function(file, externalOpts) {
+        var that = this;
+        if (typeof file === 'string') {
+            var match = variationMatches(self.variations, file);
+            if (match) {
+                alldirs.forEach(function(dir) {
+                    realExternal.call(
+                        that,
+                        path.join(opts.basedir, dir, match.file),
+                        externalOpts
+                    );
+                });
+                return;
+            }
+        }
+        var args = Array.prototype.slice.call(arguments);
+        realExternal.apply(this, args);
+    }
 
 
     this.prepareBundle(baseBundle, this.baseVariation);
