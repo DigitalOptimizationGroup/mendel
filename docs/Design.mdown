@@ -3,11 +3,11 @@ Mendel Design
 
 # Principles
 
-Mendel has some opinionated design principles that we stick to. This will serve as strict guidelines on the remainder of this document and on implementation. Some of those principles are what makes Mendel different from other experimentation or A/B testing frameworks.
+Mendel has some opinionated design principles that serve as strict guidelines on the remainder of this document and on its implementation. Some of those principles are what makes Mendel different from other experimentation or A/B testing frameworks.
 
 * **Variation Performance**
     * **No payload overhead**: no client-side code for any non-active or alternative variation should be transfered to the client
-    * **No server response overhead**: All variation resolution should happen either by CPU processing or in-memory information. All asynchronous data/configuration fetching and caching should be done at server startup and/or polling
+    * **Synchronous and fast variation resolution**: no http or file-system access during runtime in order to resolve bundle URLs or bundle payload.
 * **Variation Maintainability**
     * **Immediately disposable**: disposing of variations should be simple, straightforward - specially for bulk disposal
     * **No maintenance overhead: **keep variations updated with minimal developer effort
